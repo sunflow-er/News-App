@@ -1,7 +1,10 @@
 package com.masonk.news
 
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
+import android.view.inputmethod.EditorInfo
+import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.masonk.news.databinding.ActivityMainBinding
@@ -96,6 +99,29 @@ class MainActivity : AppCompatActivity() {
             newsService.itNews().submitList()
         }
 
+        // 검색
+        binding.searchEditText.setOnEditorActionListener { v, actionId, event ->
+            if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                // 칩 그룹의 모든 칩 체크 해제
+                binding.chipGroup.clearCheck()
+
+                // 포커스 해제
+                binding.searchEditText.clearFocus()
+
+                // 키보드 내리기
+                val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                imm.hideSoftInputFromWindow(v.windowToken, 0)
+                
+                // 검색
+                newsService.search(binding.searchEditText.text.toString()).submitList()
+
+                // 람다 리턴
+                return@setOnEditorActionListener true
+            }
+
+            return@setOnEditorActionListener false
+        }
+
         // 스포츠 칩
         binding.sportsChip.setOnClickListener {
             binding.chipGroup.clearCheck()
@@ -103,6 +129,8 @@ class MainActivity : AppCompatActivity() {
 
             newsService.sportsNews().submitList()
         }
+
+
 
         // 메인 홈 정보 가져오기
         binding.homeChip.isChecked = true

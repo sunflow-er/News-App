@@ -2,6 +2,7 @@ package com.masonk.news
 
 import retrofit2.Call
 import retrofit2.http.GET
+import retrofit2.http.Query
 
 interface NewsService {
     @GET("/rss?hl=ko&gl=KR&ceid=KR:ko")
@@ -26,4 +27,8 @@ interface NewsService {
     // 스포츠 뉴스
     @GET("/rss/topics/CAAqJggKIiBDQkFTRWdvSUwyMHZNRFp1ZEdvU0FtdHZHZ0pMVWlnQVAB?hl=ko&gl=KR&ceid=KR%3Ako")
     fun sportsNews(): Call<Rss>
+
+    // 검색
+    @GET("/rss/search?&hl=ko&gl=KR&ceid=KR%3Ako")
+    fun search(@Query("q") query: String): Call<Rss>
 }
