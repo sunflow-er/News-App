@@ -1,6 +1,7 @@
 package com.masonk.news
 
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.inputmethod.EditorInfo
@@ -43,7 +44,17 @@ class MainActivity : AppCompatActivity() {
         val newsService = retrofit.create(NewsService::class.java)
 
         // 리사이클러뷰 어댑터 생성
-        newsAdapter = NewsAdapter()
+        newsAdapter = NewsAdapter { url ->
+            // onClick(String)
+
+            // WebViewActivity로 이동하기 위한 Intent 생성
+            val intent = Intent(this, WebViewActivity::class.java).apply {
+                // Intent에 URL 정보를 추가
+                putExtra("url", url)
+            }
+            // WebViewActivity 시작
+            startActivity(intent)
+        }
 
         // 리사이클러뷰 설정
         binding.newsRecyclerView.apply {
