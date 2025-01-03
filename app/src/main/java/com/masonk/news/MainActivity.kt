@@ -7,6 +7,7 @@ import android.util.Log
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.masonk.news.databinding.ActivityMainBinding
 import com.tickaroo.tikxml.TikXml
@@ -18,7 +19,7 @@ import retrofit2.Response
 import retrofit2.Retrofit
 
 class MainActivity : AppCompatActivity() {
-    private lateinit var binding : ActivityMainBinding
+    private lateinit var binding: ActivityMainBinding
 
     // 리사이클러뷰 어댑터
     private lateinit var newsAdapter: NewsAdapter
@@ -111,22 +112,27 @@ class MainActivity : AppCompatActivity() {
         }
 
         // 검색
+        // EditText에 입력된 텍스트에 대해 특정 액션이 발생했을 때
         binding.searchEditText.setOnEditorActionListener { v, actionId, event ->
+            // 소프트 키보드에서 검색 버튼을 눌렀을 때
             if (actionId == EditorInfo.IME_ACTION_SEARCH) {
                 // 칩 그룹의 모든 칩 체크 해제
                 binding.chipGroup.clearCheck()
 
+                // 키보드 내리기
+                val imm =
+                    getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager // 형변환
+                imm.hideSoftInputFromWindow(v.windowToken, 0)
+
                 // 포커스 해제
+                // 이를 통해 사용자가 다른 UI 요소와 상호작용할 수 있음
                 binding.searchEditText.clearFocus()
 
-                // 키보드 내리기
-                val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-                imm.hideSoftInputFromWindow(v.windowToken, 0)
-                
                 // 검색
                 newsService.search(binding.searchEditText.text.toString()).submitList()
 
                 // 람다 리턴
+                // 이벤트 처리가 완료되었음을 나타냄
                 return@setOnEditorActionListener true
             }
 
@@ -140,8 +146,6 @@ class MainActivity : AppCompatActivity() {
 
             newsService.sportsNews().submitList()
         }
-
-
 
         // 메인 홈 정보 가져오기
         binding.homeChip.isChecked = true
@@ -160,6 +164,9 @@ class MainActivity : AppCompatActivity() {
 
                 // List<News>
                 val newsList = newsItemList.transform()
+
+                // 검색 결과 없을 경우 not_found Lottie 애니메이션 띄우기
+                binding.notFoundView.isVisible = newsList.isEmpty()
 
                 // 리사이클러뷰에 반영/업데이트
                 newsAdapter.submitList(newsList)

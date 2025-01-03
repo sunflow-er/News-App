@@ -91,7 +91,6 @@
 
     </com.google.android.material.textfield.TextInputLayout>
 
-
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/news_recycler_view"
         android:layout_width="0dp"
@@ -101,5 +100,19 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/search_layout"
         tools:listitem="@layout/item_news" />
+
+    <!-- Lottie -->
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/not_found_view"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/search_layout"
+        app:lottie_rawRes="@raw/not_found"
+        app:lottie_loop="true"
+        app:lottie_autoPlay="true"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
