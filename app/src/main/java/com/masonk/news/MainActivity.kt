@@ -36,6 +36,9 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        // NewsService 인터페이스 구현체
+        val newsService = retrofit.create(NewsService::class.java)
+
         // 리사이클러뷰 어댑터 생성
         newsAdapter = NewsAdapter()
 
@@ -48,11 +51,68 @@ class MainActivity : AppCompatActivity() {
             adapter = newsAdapter
         }
 
-        // NewsService 인터페이스 구현체
-        val newsService = retrofit.create(NewsService::class.java)
+        // 홈 칩
+        binding.homeChip.setOnClickListener {
+            // 칩 그룹 안에 있는 모든 칩 체크 해제
+            binding.chipGroup.clearCheck()
 
-        // 메인 피드 정보 가져오기
-        newsService.mainFeed().enqueue(object : Callback<Rss> {
+            // 홈 칩 체크
+            binding.homeChip.isChecked = true
+
+            // API 호출, 리스트 변경
+            newsService.homeNews().submitList()
+        }
+
+        // 정치 칩
+        binding.politicsChip.setOnClickListener {
+            binding.chipGroup.clearCheck()
+            binding.politicsChip.isChecked = true
+
+            // API 호출, 리스트 변경
+            newsService.politicsNews().submitList()
+        }
+
+        // 경제 칩
+        binding.economyChip.setOnClickListener {
+            binding.chipGroup.clearCheck()
+            binding.economyChip.isChecked = true
+
+            newsService.economyNews().submitList()
+        }
+
+        // 사회 칩
+        binding.societyChip.setOnClickListener {
+            binding.chipGroup.clearCheck()
+            binding.societyChip.isChecked = true
+
+            newsService.societyNews().submitList()
+        }
+
+        // IT 칩
+        binding.itChip.setOnClickListener {
+            binding.chipGroup.clearCheck()
+            binding.itChip.isChecked = true
+
+            newsService.itNews().submitList()
+        }
+
+        // 스포츠 칩
+        binding.sportsChip.setOnClickListener {
+            binding.chipGroup.clearCheck()
+            binding.sportsChip.isChecked = true
+
+            newsService.sportsNews().submitList()
+        }
+
+        // 메인 홈 정보 가져오기
+        binding.homeChip.isChecked = true
+        newsService.homeNews().submitList()
+    }
+
+    // 확장 함수
+    // API 호출 및 리사이클러뷰 리스트 갱신
+    private fun Call<Rss>.submitList() {
+        this.enqueue(object : Callback<Rss> {
             override fun onResponse(p0: Call<Rss>, p1: Response<Rss>) {
                 Log.d("MainActivity", "${p1.body()?.channel?.newsItemList}")
 
@@ -90,7 +150,7 @@ class MainActivity : AppCompatActivity() {
                             e.printStackTrace()
                         }
 
-                        // UI 스레드에서 실행
+                        // UI작업은 UI 스레드에서 실행
                         // If the current thread is not the UI thread, the action is posted to the event queue of the UI thread.
                         runOnUiThread {
                             // newsAdapter에 특정 위치의 아이템이 변경되었음을 알림
